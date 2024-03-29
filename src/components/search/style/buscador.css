@@ -1,0 +1,13 @@
+.container-customm {
+  display: flex;
+  gap: 100px;
+}
+.categorias {
+  width: 100%;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

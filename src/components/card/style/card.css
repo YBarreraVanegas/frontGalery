@@ -1,0 +1,38 @@
+.grid-container {
+  width: 100%;
+  columns: 5 250px;
+  column-gap: 10px;
+  padding: 1.5rem;
+}
+.grid-container-search {
+  width: 100%;
+  columns: 5 200px;
+  column-gap: 10px;
+  padding: 1.5rem;
+}
+.grid-item {
+  height: 100%;
+  margin-bottom: 10px;
+}
+/* card.css */
+.card {
+  position: relative; /* Establece posición relativa para alinear botones */
+}
+
+.card-buttons {
+  z-index: 100;
+  margin-top: 10px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  display: flex;
+  display: none;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.card:hover .card-buttons {
+  display: block; /* Muestra los botones al hacer hover sobre la card */
+}

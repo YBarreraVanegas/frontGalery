@@ -1,0 +1,15 @@
+/* .nav-dropdown-open {
+  position: relative; /* Ajusta el posicionamiento del menú desplegable al abrirse */
+.imagen_per {
+  width: 50px;
+}
+.imagenNav {
+  width: 100%;
+  height: 40px;
+  border-radius: 50%;
+}
+.container-circle {
+  width: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
