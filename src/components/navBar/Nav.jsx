@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import Image from 'react-bootstrap/Image'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import logo from '../../assets/logo.png'
 import avatar from '../../assets/avatar.png'
 import DarkModeToggle from '../darkmode/Darkmode'
@@ -83,15 +83,17 @@ const NavBar = () => {
       } sticky-top`}
     >
       <Container fluid>
-        <Navbar.Brand href="/">
-          <img src={logo} alt="logo-gallery" width={'50px'} />
+        <Navbar.Brand>
+          <Link to="/">
+            <img src={logo} alt="logo-gallery" width={'50px'} />
+          </Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="mx-auto my-3 my-lg-0 align-items-center">
-            <Nav.Link href="/inicio">Inicio</Nav.Link>
-            <Nav.Link href="/descubre">Descubre Más</Nav.Link>
-            <Nav.Link href="/addimg">Agrega Imagenes</Nav.Link>
+            <Link to="/inicio">Inicio</Link>
+            <Link to="/descubre">Descubre Más</Link>
+            <Link to="/addimg">Agrega Imagenes</Link>
           </Nav>
 
           <Nav
@@ -112,8 +114,8 @@ const NavBar = () => {
               </NavDropdown>
             ) : (
               <>
-                <Nav.Link href="/registro">Regístrate</Nav.Link>
-                <Nav.Link href="/ingreso">Inicia Sesión</Nav.Link>
+                <Link to="/registro">Regístrate</Link>
+                <Link to="/ingreso">Inicia Sesión</Link>
               </>
             )}
 
