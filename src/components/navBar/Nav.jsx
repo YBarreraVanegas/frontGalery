@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from 'react-bootstrap/Navbar'
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
@@ -69,9 +69,12 @@ const NavBar = () => {
     navigate('/')
   }
 
+  const handlePerfil = () => {
+    navigate('dashboard')
+  }
   const handleLogout = () => {
     localStorage.removeItem('token')
-    window.location.reload() // Actualiza la página al cerrar sesión
+    window.location.reload()
     navigateToLogin()
   }
 
@@ -84,16 +87,22 @@ const NavBar = () => {
     >
       <Container fluid>
         <Navbar.Brand>
-          <Link to="/">
+          <Link to="/" className="nav-link">
             <img src={logo} alt="logo-gallery" width={'50px'} />
           </Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="mx-auto my-3 my-lg-0 align-items-center">
-            <Link to="/inicio">Inicio</Link>
-            <Link to="/descubre">Descubre Más</Link>
-            <Link to="/addimg">Agrega Imagenes</Link>
+            <Link to="/inicio" className="nav-link">
+              Inicio
+            </Link>{' '}
+            <Link to="/descubre" className="nav-link">
+              Descubre Más
+            </Link>{' '}
+            <Link to="/addimg" className="nav-link">
+              Agrega Imagenes
+            </Link>
           </Nav>
 
           <Nav
@@ -111,11 +120,18 @@ const NavBar = () => {
                 <NavDropdown.Item onClick={handleLogout}>
                   Cerrar Sesión
                 </NavDropdown.Item>
+                <NavDropdown.Item onClick={handlePerfil}>
+                  perfil
+                </NavDropdown.Item>
               </NavDropdown>
             ) : (
               <>
-                <Link to="/registro">Regístrate</Link>
-                <Link to="/ingreso">Inicia Sesión</Link>
+                <Link to="/registro" className="nav-link">
+                  Regístrate
+                </Link>{' '}
+                <Link to="/ingreso" className="nav-link">
+                  Inicia Sesión
+                </Link>
               </>
             )}
 

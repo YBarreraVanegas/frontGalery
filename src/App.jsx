@@ -8,6 +8,7 @@ import {
   RutaProtegida,
   RutaProtegidaCreate,
   RutaProtegidaCreateCard,
+  RutaProtegidaEdit,
 } from './components/rutas/Ruta'
 import Home from './views/Home'
 import ImageDetail from './components/imagendetallada/ImageDetail'
@@ -32,6 +33,7 @@ function App() {
           <Route path="/create" element={<RutaProtegidaCreate />} />
           <Route path="/addimg" element={<RutaProtegidaCreateCard />} />
           <Route path="/dashboard" element={<RutaProtegida />} />
+          <Route path="/editar" element={<RutaProtegidaEdit />} />
         </Routes>
       </div>
     </>

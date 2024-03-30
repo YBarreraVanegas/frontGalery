@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import useGetData from '../Fetch/useGetData'
 import { ProcessedImageUrl } from '../utils'
-
+import './style/detailImage.css'
+import Carrusel from './Carrusel'
 const ImageDownload = ({ imageUrl }) => {
   const { data: imageInfo, loading, error } = useGetData(imageUrl)
   const [processedImageUrl, setProcessedImageUrl] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-
+  const [categorias, setCategorias] = useState('')
   useEffect(() => {
     if (imageInfo && imageInfo.imagen) {
       // Obtener la URL procesada usando ProcessedImageUrl
@@ -17,6 +18,7 @@ const ImageDownload = ({ imageUrl }) => {
       // Actualizar el título y la descripción
       setTitle(imageInfo.titulo || 'Título no disponible')
       setDescription(imageInfo.descripcion || 'Descripción no disponible')
+      setCategorias(imageInfo.categorias || 'Descripción no disponible')
     }
   }, [imageInfo]) // Ejecutar el efecto cuando imageInfo se actualiza
 
@@ -57,15 +59,16 @@ const ImageDownload = ({ imageUrl }) => {
         <p>Error al cargar la imagen</p>
       ) : (
         <>
-          <div className="card">
-            <img
-              src={processedImageUrl}
-              className="card-img-top"
+          <div className="card card-detail">
+            <ProcessedImageUrl
+              imageUrl={imageInfo.imagen}
+              className="card-img"
               alt="Imagen"
             />
             <div className="card-body">
               <h5 className="card-title">{title}</h5>
-              <p className="card-text">{description}</p>
+              <Carrusel categorias={categorias} />
+
               <button className="btn btn-primary" onClick={handleDownloadImage}>
                 Descargar Imagen
               </button>

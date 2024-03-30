@@ -14,9 +14,9 @@
   height: 100%;
   margin-bottom: 10px;
 }
-/* card.css */
+
 .card {
-  position: relative; /* Establece posición relativa para alinear botones */
+  position: relative;
 }
 
 .card-buttons {
@@ -34,5 +34,18 @@
 }
 
 .card:hover .card-buttons {
-  display: block; /* Muestra los botones al hacer hover sobre la card */
+  display: block;
+}
+
+.my-masonry-grid {
+  display: flex;
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 10px;
+}
+
+.my-masonry-grid_item {
+  margin-bottom: 10px;
 }

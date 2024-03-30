@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ProfileImage } from './ImagePerfil'
+import CardDashboard from './CardDashboard'
 
 const Dashboard = () => {
   const [perfil, setPerfil] = useState(null)
@@ -20,6 +21,12 @@ const Dashboard = () => {
           )
           const perfilEspecifico = await responsePerfil.json()
           setPerfil(perfilEspecifico)
+
+          // Guardar perfilEncontrado en el localStorage
+          localStorage.setItem(
+            'perfilEncontrado',
+            JSON.stringify(perfilEncontrado.id)
+          )
         }
       } catch (error) {
         console.error('Error al cargar el perfil específico:', error)
@@ -28,15 +35,14 @@ const Dashboard = () => {
 
     obtenerPerfiles()
   }, [userId])
+
   if (!perfil) {
     return <p>Cargando perfil...</p>
   }
 
   return (
-    <div className="container">
-      <ProfileImage userId={perfil.id} />
-      <h1>Perfil de {perfil.nombre}</h1>
-      <p>Email: {perfil.descripcion}</p>
+    <div className="container container-dashboard">
+      <CardDashboard nombre={perfil.nombre} id={perfil.id} />
     </div>
   )
 }

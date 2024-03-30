@@ -8,7 +8,6 @@ const BuscadorImagenesPorCaracteristicas = () => {
   const [filteredCategories, setFilteredCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('')
   const [searchText, setSearchText] = useState('')
-  const [showMore, setShowMore] = useState(false)
   const url = `${import.meta.env.VITE_URL_API}/api`
   const navigate = useNavigate() // Usar useNavigate para la navegación
 
@@ -42,11 +41,7 @@ const BuscadorImagenesPorCaracteristicas = () => {
 
   const handleCategoryToggle = category => {
     setSelectedCategory(category)
-    navigate(`/filtro/${category.toLowerCase()}`) // Redirigir a la página de cards por categoría
-  }
-
-  const handleShowMore = () => {
-    setShowMore(prevState => !prevState)
+    navigate(`/filtro/${category.toLowerCase()}`)
   }
 
   return (
@@ -63,11 +58,6 @@ const BuscadorImagenesPorCaracteristicas = () => {
             {category}
           </button>
         ))}
-        {showMore && categorias.length > 10 && (
-          <button className="btn btn-toggle" onClick={handleShowMore}>
-            Mostrar menos
-          </button>
-        )}
       </div>
       {loading ? (
         <p>Cargando...</p>

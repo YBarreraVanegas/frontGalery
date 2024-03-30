@@ -13,3 +13,12 @@
   border-radius: 50%;
   margin-right: 10px;
 }
+.nav-link {
+  transition: background-color 0.3s, border-radius 0.3s;
+  border-radius: 10px;
+}
+
+.nav-link:hover {
+  background-color: #f0f0f052;
+  border-radius: 10px;
+}

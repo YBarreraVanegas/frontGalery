@@ -1,0 +1,13 @@
+.container-Detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 20px; /* Espacio entre las columnas */
+}
+@media (max-width: 768px) {
+  .container-Detail {
+    grid-template-columns: 1fr; /* Solo una columna en pantallas pequeñas */
+  }
+}
+.card-detail {
+  width: 80%;
+}
