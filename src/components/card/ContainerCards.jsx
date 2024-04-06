@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import useGetData from '../Fetch/useGetData'
 import Card from './Card.jsx'
 import './style/card.css'

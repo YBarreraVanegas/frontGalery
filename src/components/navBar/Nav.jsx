@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Navbar from 'react-bootstrap/Navbar'
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import logo from '../../assets/logo.png'
 import avatar from '../../assets/avatar.png'
 import DarkModeToggle from '../darkmode/Darkmode'
-import { ProfileImageNav } from '../dashboard/ImagePerfil' // Importa el nuevo componente
+import { ProfileImageNav } from '../dashboard/ImagePerfil'
 import './Style/Nav.css'
 
 const NavBar = () => {
@@ -20,6 +20,7 @@ const NavBar = () => {
   const [perfil, setPerfil] = useState(null)
   const [imagenUrl, setImagenUrl] = useState(null)
   const userId = token ? JSON.parse(atob(token.split('.')[1])).userId : null
+  const imageRef = useRef(null)
 
   useEffect(() => {
     const obtenerPerfiles = async () => {
@@ -70,8 +71,13 @@ const NavBar = () => {
   }
 
   const handlePerfil = () => {
-    navigate('dashboard')
+    if (!perfil && token) {
+      navigate('/create')
+    } else {
+      navigate('dashboard')
+    }
   }
+
   const handleLogout = () => {
     localStorage.removeItem('token')
     window.location.reload()
@@ -93,20 +99,10 @@ const NavBar = () => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
-          <Nav className="mx-auto my-3 my-lg-0 align-items-center">
-            <Link to="/inicio" className="nav-link">
-              Inicio
-            </Link>{' '}
-            <Link to="/descubre" className="nav-link">
-              Descubre Más
-            </Link>{' '}
-            <Link to="/addimg" className="nav-link">
-              Agrega Imagenes
-            </Link>
-          </Nav>
+          <Nav className="mx-auto my-3 my-lg-0 align-items-center "></Nav>
 
           <Nav
-            className={`my-3 my-lg-0 align-items-center ${
+            className={`my-3 my-lg-0 align-items-center  ${
               dropdownOpen ? 'nav-dropdown-open' : ''
             }`}
           >
@@ -136,13 +132,33 @@ const NavBar = () => {
             )}
 
             {!perfil && (
-              <Image src={avatar} roundedCircle className="imagen_per" />
+              <Image
+                src={avatar}
+                roundedCircle
+                className="imagen_per"
+                ref={imageRef}
+                onClick={() => {
+                  if (dropdownOpen) {
+                    setDropdownOpen(false)
+                  } else {
+                    setDropdownOpen(true)
+                    setTimeout(() => {
+                      if (imageRef.current) {
+                        imageRef.current.click()
+                      }
+                    }, 100)
+                  }
+                }}
+              />
             )}
 
             {perfil && (
               <ProfileImageNav userId={perfil.id} className="imagen_per" />
             )}
             <DarkModeToggle className="darkmode-btn" />
+            <Link to="/addimg" className="nav-link bg-success  text-light ">
+              Subir <i className="bi bi-arrow-up-circle-fill"></i>
+            </Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

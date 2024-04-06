@@ -24,9 +24,7 @@ const DarkModeToggle = () => {
         checked={darkMode}
         onChange={toggleDarkMode}
       />
-      <label className="form-check-label" htmlFor="darkModeCheckbox">
-        Modo Oscuro
-      </label>
+      <label className="form-check-label" htmlFor="darkModeCheckbox"></label>
     </div>
   )
 }

@@ -38,6 +38,7 @@ const InicioSesion = () => {
 
   return (
     <Form onSubmit={handleSubmit}>
+      <h1>Iniciar seccion</h1>
       <Form.Group controlId="email">
         <Form.Label>Email</Form.Label>
         <Form.Control

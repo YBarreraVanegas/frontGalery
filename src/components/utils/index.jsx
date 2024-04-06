@@ -18,6 +18,7 @@ export const ProcessedImageUrl = ({ imageUrl }) => {
 
 export const useFavorito = imagenId => {
   const [favorito, setFavorito] = useState(false)
+  const [guardado, setGuardado] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [loading, setLoading] = useState(true)
   const [perfilData, setPerfilData] = useState(null)
@@ -41,6 +42,8 @@ export const useFavorito = imagenId => {
       )
 
       setPerfilData(response.data)
+      setFavorito(response.data.favoritos.includes(imagenId))
+      setGuardado(response.data.guardados.includes(imagenId))
       setLoading(false)
     } catch (error) {
       console.error('Error al obtener datos del perfil:', error)
@@ -51,35 +54,48 @@ export const useFavorito = imagenId => {
   const toggleFavorito = async () => {
     try {
       if (!token || !perfilEncontrado) {
-        setShowAlert(true) // Mostrar alert cuando no hay token válido
+        setShowAlert(true)
         return
       }
 
       const formData = new FormData()
       formData.append('favoritos', imagenId)
 
-      // Verificar si el ID de la imagen ya existe en la columna de favoritos
       if (
         perfilData &&
         perfilData.favoritos &&
         perfilData.favoritos.includes(imagenId)
       ) {
-        alert('La imagen ya está en favoritos.')
-        return
+        const response = await axios.delete(
+          `${import.meta.env.VITE_URL_API}/fav/${perfilEncontrado}`,
+          {
+            data: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        console.log('Eliminado de favoritos')
+        setFavorito(false)
+        setMensaje(response.data.message)
+      } else {
+        const response = await axios.post(
+          `${import.meta.env.VITE_URL_API}/fav/${perfilEncontrado}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        console.log('Agregado a favoritos')
+        setFavorito(true)
+        setMensaje(response.data.message)
       }
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_URL_API}/fav/${perfilEncontrado}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-
-      setFavorito(!favorito)
-      setMensaje(response.data.message)
+      fetchData()
     } catch (error) {
       console.error('Error al agregar/eliminar imagen de favoritos:', error)
       setMensaje('Error al agregar/eliminar imagen de favoritos')
@@ -89,35 +105,48 @@ export const useFavorito = imagenId => {
   const toggleGuardado = async () => {
     try {
       if (!token || !perfilEncontrado) {
-        setShowAlert(true) // Mostrar alert cuando no hay token válido
+        setShowAlert(true)
         return
       }
 
       const formData = new FormData()
       formData.append('guardados', imagenId)
 
-      // Verificar si el ID de la imagen ya existe en la columna de guardados
       if (
         perfilData &&
         perfilData.guardados &&
         perfilData.guardados.includes(imagenId)
       ) {
-        alert('La imagen ya está en guardados.')
-        return
+        const response = await axios.delete(
+          `${import.meta.env.VITE_URL_API}/fav/${perfilEncontrado}`,
+          {
+            data: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        console.log('Eliminado de guardados')
+        setGuardado(false)
+        setMensaje(response.data.message)
+      } else {
+        const response = await axios.post(
+          `${import.meta.env.VITE_URL_API}/fav/${perfilEncontrado}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        console.log('Agregado a guardados')
+        setGuardado(true)
+        setMensaje(response.data.message)
       }
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_URL_API}/fav/${perfilEncontrado}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-
-      setFavorito(!favorito)
-      setMensaje(response.data.message)
+      fetchData()
     } catch (error) {
       console.error('Error al agregar/eliminar imagen de guardados:', error)
       setMensaje('Error al agregar/eliminar imagen de guardados')
@@ -138,5 +167,14 @@ export const useFavorito = imagenId => {
     }
   }, [showAlert])
 
-  return { favorito, mensaje, toggleFavorito, toggleGuardado, loading }
+  useEffect(() => {}, [favorito, guardado]) // Escucha cambios en favorito y guardado
+
+  return {
+    favorito,
+    guardado,
+    mensaje,
+    toggleFavorito,
+    toggleGuardado,
+    loading,
+  }
 }

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ProfileImage } from './ImagePerfil'
 import CardDashboard from './CardDashboard'
 
 const Dashboard = () => {
   const [perfil, setPerfil] = useState(null)
+  const navigate = useNavigate() // Obtener la función de navegación
   const token = localStorage.getItem('token')
   const userId = token ? JSON.parse(atob(token.split('.')[1])).userId : null
 
@@ -27,6 +29,9 @@ const Dashboard = () => {
             'perfilEncontrado',
             JSON.stringify(perfilEncontrado.id)
           )
+        } else {
+          // Navegar a la página /create si no hay un perfil creado
+          navigate('/create')
         }
       } catch (error) {
         console.error('Error al cargar el perfil específico:', error)
@@ -34,7 +39,7 @@ const Dashboard = () => {
     }
 
     obtenerPerfiles()
-  }, [userId])
+  }, [userId, navigate]) // Agregar navigate como dependencia
 
   if (!perfil) {
     return <p>Cargando perfil...</p>

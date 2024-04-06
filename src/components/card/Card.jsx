@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom'
-import './style/card.css'
-import { ProcessedImageUrl, useFavorito } from '../utils' // Asegúrate de importar correctamente este componente
+import { ProcessedImageUrl, useFavorito } from '../utils'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap' // Importa OverlayTrigger y Tooltip
 
 const Card = ({ imagen, titulo, descripcion, id }) => {
-  const { favorito, mensaje, toggleFavorito, toggleGuardado } = useFavorito(id)
+  const {
+    favorito,
+    guardado,
+    mensaje,
+    toggleFavorito,
+    toggleGuardado,
+    loading,
+  } = useFavorito(id)
 
   const imagenUrl = imagen
 
@@ -17,14 +24,44 @@ const Card = ({ imagen, titulo, descripcion, id }) => {
         />
       </Link>
       <div className="card-buttons">
-        <button className="btn btn-primary btn-sm" onClick={toggleFavorito}>
-          {favorito ? 'Eliminar de favoritos' : 'Agregar a favoritos'}
-        </button>
-        <button className="btn btn-secondary btn-sm" onClick={toggleGuardado}>
-          Guardar en selección
-        </button>
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip>
+              {favorito ? 'Eliminar de favoritos' : 'Agregar a favoritos'}
+            </Tooltip>
+          } // Tooltip para favoritos
+        >
+          <button
+            className={`btn btn-${favorito ? 'danger' : 'secondary'} btn-sm`}
+            onClick={toggleFavorito}
+          >
+            <i
+              className={`bi bi-${favorito ? 'heartbreak-fill' : 'heart-fill'}`}
+            ></i>
+          </button>
+        </OverlayTrigger>
+
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip>
+              {guardado ? 'Eliminar de colección' : 'Agregar a colección'}
+            </Tooltip>
+          } // Tooltip para colección
+        >
+          <button
+            className={`btn btn-${guardado ? 'danger' : 'primary'} btn-sm`}
+            onClick={toggleGuardado}
+          >
+            <i
+              className={`bi bi-${
+                guardado ? 'bookmark-x-fill' : 'bookmark-heart-fill'
+              }`}
+            ></i>
+          </button>
+        </OverlayTrigger>
       </div>
-      {mensaje && <p>{mensaje}</p>}
     </article>
   )
 }

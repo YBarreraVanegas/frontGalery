@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom' // Importar useNavigate
+import { useNavigate } from 'react-router-dom'
 import useGetData from '../Fetch/useGetData'
 import './style/buscador.css'
 
@@ -8,8 +8,9 @@ const BuscadorImagenesPorCaracteristicas = () => {
   const [filteredCategories, setFilteredCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('')
   const [searchText, setSearchText] = useState('')
+  const [showMenu, setShowMenu] = useState(false)
   const url = `${import.meta.env.VITE_URL_API}/api`
-  const navigate = useNavigate() // Usar useNavigate para la navegación
+  const navigate = useNavigate()
 
   const { data, loading, error, refetch } = useGetData(url)
 
@@ -44,20 +45,51 @@ const BuscadorImagenesPorCaracteristicas = () => {
     navigate(`/filtro/${category.toLowerCase()}`)
   }
 
+  const handleMostrarTodas = () => {
+    setSelectedCategory('')
+    navigate(`/filtro/todas`)
+  }
+
+  const handleMenuToggle = () => {
+    setShowMenu(!showMenu)
+  }
+
   return (
     <div className="container mt-4">
       <div className="categorias">
-        {filteredCategories.map((category, index) => (
+        <div className="dropdown">
           <button
-            key={index}
-            className={` btn btn-toggle bg-primary  ${
-              selectedCategory === category ? 'active' : ''
-            }`}
-            onClick={() => handleCategoryToggle(category)}
+            className="btn btn-toggle btn-primary dropdown-toggle"
+            onClick={handleMenuToggle}
+            aria-expanded={showMenu ? 'true' : 'false'}
           >
-            {category}
+            Categorías
           </button>
-        ))}
+          <ul className={`dropdown-menu${showMenu ? ' show' : ''}`}>
+            <li key="todas">
+              <button
+                className={`dropdown-item${
+                  selectedCategory === '' ? ' active' : ''
+                }`}
+                onClick={handleMostrarTodas}
+              >
+                Todas
+              </button>
+            </li>
+            {filteredCategories.map((category, index) => (
+              <li key={index}>
+                <button
+                  className={`dropdown-item${
+                    selectedCategory === category ? ' active' : ''
+                  }`}
+                  onClick={() => handleCategoryToggle(category)}
+                >
+                  {category}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       {loading ? (
         <p>Cargando...</p>

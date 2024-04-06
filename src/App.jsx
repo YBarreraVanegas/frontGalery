@@ -13,7 +13,7 @@ import {
 import Home from './views/Home'
 import ImageDetail from './components/imagendetallada/ImageDetail'
 import CardsPorCategoria from './components/cardsCat/CardsPorCategoria'
-import Descubre from './components/descubre/Descubre'
+import CardsPorBusqueda from './components/cardsCat/CardsPorCategoria'
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
           <Route path="/imagenes/:id" element={<ImageDetail />} />
           <Route path="/*" element={<Home />} />
           <Route path="/filtro/:categoria" element={<CardsPorCategoria />} />
-          <Route path="/descubre" element={<Descubre />} />
+          <Route path="/filtro/:busqueda" element={<CardsPorBusqueda />} />
 
           <Route path="/create" element={<RutaProtegidaCreate />} />
           <Route path="/addimg" element={<RutaProtegidaCreateCard />} />

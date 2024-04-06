@@ -1,14 +1,16 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom' // Importar useNavigate
 import usePostData from '../Fetch/usePostData'
 
 const CreatePerfil = () => {
   const [nombre, setNombre] = useState('')
-  const [imagenPerfil, setImagenPerfil] = useState(null) // Cambiado a null inicialmente
+  const [imagenPerfil, setImagenPerfil] = useState(null)
   const [descripcion, setDescripcion] = useState('')
   const [token] = useState(localStorage.getItem('token') || '')
 
   const url = `${import.meta.env.VITE_URL_API}/perfil`
   const { postData, loading, error } = usePostData()
+  const navigate = useNavigate() // Obtener la función de navegación
 
   const handleImagenPerfilChange = e => {
     const file = e.target.files[0]
@@ -19,9 +21,12 @@ const CreatePerfil = () => {
     e.preventDefault()
     const formData = new FormData()
     formData.append('nombre', nombre)
-    formData.append('imagen_perfil', imagenPerfil) // Agregar imagen al FormData directamente
+    formData.append('imagen_perfil', imagenPerfil)
     formData.append('descripcion', descripcion)
     await postData(url, formData, token)
+
+    // Redirigir a la página principal ('/') después de enviar el formulario
+    navigate('/', { replace: true }) // Usar navigate con replace para reemplazar la entrada en el historial
   }
 
   return (
@@ -32,11 +37,7 @@ const CreatePerfil = () => {
         onChange={e => setNombre(e.target.value)}
         placeholder="Nombre"
       />
-      <input
-        type="file"
-        onChange={handleImagenPerfilChange} // Manejar el cambio de la imagen
-        accept="image/*" // Aceptar solo archivos de imagen
-      />
+      <input type="file" onChange={handleImagenPerfilChange} accept="image/*" />
       <textarea
         value={descripcion}
         onChange={e => setDescripcion(e.target.value)}

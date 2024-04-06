@@ -1,88 +1,71 @@
 import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import usePostData from '../Fetch/usePostData'
 
 const CreateCard = () => {
-  const [titulo, setTitulo] = useState('')
-  const [imagenPerfil, setImagenPerfil] = useState(null)
-  const [descripcion, setDescripcion] = useState('')
-  const [categorias, setCategorias] = useState([])
-  const [categoriaInput, setCategoriaInput] = useState('')
-  const [token] = useState(localStorage.getItem('token') || '')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  const url = `${import.meta.env.VITE_URL_API}/api`
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm()
   const { postData } = usePostData()
+  const [loading, setLoading] = useState(false)
+  const [error, setErrorMsg] = useState('')
+  const [imageUploaded, setImageUploaded] = useState(false) // Nuevo estado para controlar si la imagen se ha enviado
+  const token = localStorage.getItem('token') || ''
+  const url = `${import.meta.env.VITE_URL_API}/api`
+  const [previewImage, setPreviewImage] = useState(null)
+  const [categoriasList, setCategoriasList] = useState([])
+  const [selectedFile, setSelectedFile] = useState(null) // Nuevo estado para guardar el archivo seleccionado
 
-  const handleImagenPerfilDrop = e => {
-    e.preventDefault()
-    const file = e.dataTransfer.files[0]
-    setImagenPerfil(file)
-  }
+  const imagen = watch('imagen')
 
-  const handleImagenPerfilChange = e => {
+  const handleImagenChange = e => {
     const file = e.target.files[0]
-    setImagenPerfil(file)
+    setSelectedFile(file) // Guardar el archivo seleccionado en el estado
+    setPreviewImage(URL.createObjectURL(file)) // Mostrar vista previa de la imagen
   }
 
-  const handleSeleccionarImagenClick = () => {
-    document.getElementById('inputImagenPerfil').click()
-  }
-
-  const handleCategoriaInputChange = e => {
-    setCategoriaInput(e.target.value)
-  }
-
-  const handleAgregarCategoria = () => {
-    if (categoriaInput.trim() !== '') {
-      setCategorias(prevCategorias => [
-        ...prevCategorias,
-        categoriaInput.trim(),
-      ])
-      setCategoriaInput('')
-    }
-  }
-
-  const handleEliminarCategoria = index => {
-    setCategorias(prevCategorias =>
-      prevCategorias.filter((_, i) => i !== index)
-    )
-  }
-
-  const handleSubmit = async e => {
-    e.preventDefault()
-
-    const formData = new FormData()
-    formData.append('titulo', titulo)
-    formData.append('imagen', imagenPerfil)
-    formData.append('descripcion', descripcion)
-    formData.append('categorias', JSON.stringify(categorias))
-
+  const onSubmit = async data => {
     try {
       setLoading(true)
-      setError('')
+      setErrorMsg('')
+
+      const formData = new FormData()
+      formData.append('titulo', data.titulo)
+      formData.append('descripcion', data.descripcion)
+      formData.append('categorias', JSON.stringify(categoriasList))
+      formData.append('imagen', selectedFile, 'imagen') // Agregar el archivo al FormData con el nombre 'imagen'
 
       await postData(url, formData, token)
 
       clearForm()
+      setImageUploaded(true) // Establecer que la imagen se ha enviado
     } catch (error) {
       console.error('Error al enviar datos:', error)
-      setError('Error al enviar datos. Por favor, inténtalo de nuevo.')
+      setErrorMsg('Error al enviar datos. Por favor, inténtalo de nuevo.')
     } finally {
       setLoading(false)
     }
   }
 
+  const handleEliminarCategoria = categoria => {
+    const updatedCategorias = categoriasList.filter(cat => cat !== categoria)
+    setCategoriasList(updatedCategorias)
+  }
+
   const clearForm = () => {
-    setTitulo('')
-    setImagenPerfil(null)
-    setDescripcion('')
-    setCategorias([])
-    setCategoriaInput('')
+    setValue('titulo', '')
+    setValue('imagen', null)
+    setValue('descripcion', '')
+    setCategoriasList([])
+    setPreviewImage(null)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="container mt-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="container mt-4">
       <div className="mb-3">
         <label htmlFor="titulo" className="form-label">
           Título
@@ -91,47 +74,36 @@ const CreateCard = () => {
           type="text"
           id="titulo"
           className="form-control"
-          value={titulo}
-          onChange={e => setTitulo(e.target.value)}
+          {...register('titulo', { required: 'Este campo es requerido' })}
           placeholder="Título"
         />
+        {errors.titulo && (
+          <p className="text-danger">{errors.titulo.message}</p>
+        )}
       </div>
       <div className="mb-3">
-        <div
-          className="mb-3"
-          onDrop={handleImagenPerfilDrop}
-          onDragOver={e => e.preventDefault()}
-        >
-          <label htmlFor="imagenPerfil" className="form-label">
-            Imagen
-          </label>
-          <div className="form-control" style={{ minHeight: '100px' }}>
-            {imagenPerfil ? (
-              <img
-                src={URL.createObjectURL(imagenPerfil)}
-                alt="Imagen"
-                style={{ maxWidth: '100%' }}
-              />
-            ) : (
-              <p>Arrastra y suelta la imagen aquí o selecciona un archivo</p>
-            )}
-          </div>
-          <input
-            type="file"
-            id="inputImagenPerfil"
-            className="d-none"
-            onChange={handleImagenPerfilChange}
-            accept="image/*"
-          />
-          <button
-            type="button"
-            className="btn btn-secondary mt-2"
-            onClick={handleSeleccionarImagenClick}
-          >
-            Seleccionar Imagen
-          </button>
-        </div>
+        <label htmlFor="imagen" className="form-label">
+          Imagen
+        </label>
+        <input
+          type="file"
+          id="imagen"
+          className="form-control"
+          {...register('imagen', {
+            required: previewImage ? false : 'Selecciona una imagen',
+          })}
+          onChange={handleImagenChange}
+          accept="image/*"
+        />
+        {errors.imagen && (
+          <p className="text-danger">{errors.imagen.message}</p>
+        )}
       </div>
+      {previewImage && (
+        <div className="mb-3">
+          <img src={previewImage} alt="Imagen" style={{ maxWidth: '100%' }} />
+        </div>
+      )}
       <div className="mb-3">
         <label htmlFor="descripcion" className="form-label">
           Descripción
@@ -139,47 +111,65 @@ const CreateCard = () => {
         <textarea
           id="descripcion"
           className="form-control"
-          value={descripcion}
-          onChange={e => setDescripcion(e.target.value)}
+          {...register('descripcion', { required: 'Este campo es requerido' })}
           placeholder="Descripción"
         />
+        {errors.descripcion && (
+          <p className="text-danger">{errors.descripcion.message}</p>
+        )}
       </div>
       <div className="mb-3">
         <label htmlFor="categorias" className="form-label">
           Categorías
         </label>
-        <div className="d-flex align-items-center">
-          {categorias.map((categoria, index) => (
-            <div key={index} className="badge bg-secondary me-2">
-              {categoria}
-              <span
-                className="ms-1 text-white cursor-pointer"
-                onClick={() => handleEliminarCategoria(index)}
-              >
-                X
-              </span>
-            </div>
-          ))}
-          <input
-            type="text"
-            id="categorias"
-            className="form-control"
-            value={categoriaInput}
-            onChange={handleCategoriaInputChange}
-            placeholder="Agregar categoría"
-          />
-          <button
-            type="button"
-            className="btn btn-primary ms-2"
-            onClick={handleAgregarCategoria}
-          >
-            Agregar
-          </button>
+        <input
+          type="text"
+          id="categorias"
+          className="form-control"
+          placeholder="Agregar categoría"
+          onKeyDown={e => {
+            if (e.key === ' ' && e.target.value.trim()) {
+              e.preventDefault() // Evita que se agregue el espacio al valor del campo
+
+              const nuevaCategoria = e.target.value.trim()
+              setCategoriasList([...categoriasList, nuevaCategoria])
+              e.target.value = '' // Limpia el campo de entrada
+            }
+          }}
+        />
+        <div className="mb-3">
+          <label className="form-label">Categorías seleccionadas:</label>
+          <div className="d-flex flex-wrap">
+            {categoriasList.length > 0 ? (
+              categoriasList.map((categoria, index) => (
+                <div key={index} className="badge bg-secondary me-2">
+                  {categoria}
+                  <span
+                    className="ms-1 text-white cursor-pointer"
+                    onClick={() => handleEliminarCategoria(categoria)}
+                  >
+                    X
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p>No hay categorías seleccionadas.</p>
+            )}
+          </div>
         </div>
       </div>
-      <button type="submit" className="btn btn-primary" disabled={loading}>
+      <button
+        type="submit"
+        className="btn btn-primary"
+        disabled={loading || (!imagen && !previewImage)} // Modificamos la condición del disabled
+      >
         Enviar
       </button>
+      {imageUploaded && (
+        <div className="alert alert-success mt-3" role="alert">
+          La imagen se ha subido exitosamente.
+        </div>
+      )}
       {loading && <p className="mt-2">Enviando datos...</p>}
       {error && <p className="mt-2 text-danger">Error al enviar datos</p>}
     </form>
