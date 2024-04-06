@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import useGetData from '../Fetch/useGetData'
 import SearchCard from '../search/SearchCard'
 
-const CardsPorCategoria = () => {
+const CardsPorBusqueda = () => {
   const { categoria } = useParams()
   const [data, setData] = useState([])
   const {
@@ -50,4 +50,4 @@ const CardsPorCategoria = () => {
   )
 }
 
-export default CardsPorCategoria
+export default CardsPorBusqueda
