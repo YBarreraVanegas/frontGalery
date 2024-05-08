@@ -10,6 +10,7 @@ import avatar from '../../assets/avatar.png'
 import DarkModeToggle from '../darkmode/Darkmode'
 import { ProfileImageNav } from '../dashboard/ImagePerfil'
 import './Style/Nav.css'
+import NavbarItems from './NavItems'
 
 const NavBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -36,7 +37,7 @@ const NavBar = () => {
           )
           const perfilEspecifico = await responsePerfil.json()
           setPerfil(perfilEspecifico)
-          setUserData(perfilEspecifico) // También actualiza userData con el perfil específico
+          setUserData(perfilEspecifico)
           if (perfilEspecifico.imagen_perfil) {
             const imagenUrl = perfilEspecifico.imagen_perfil
               .replace(/["{}]/g, '')
@@ -66,6 +67,33 @@ const NavBar = () => {
     }
   }, [])
 
+  const verificarExpiracionToken = () => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      return
+    }
+
+    try {
+      const { exp } = JSON.parse(atob(token.split('.')[1]))
+      const expirationTime = exp * 1000 // Convertir a milisegundos
+      const currentTime = new Date().getTime()
+
+      if (currentTime > expirationTime) {
+        localStorage.removeItem('token')
+        window.location.reload()
+        navigateToLogin()
+      }
+    } catch (error) {
+      console.error('Error al verificar la expiración del token:', error)
+    }
+
+    setTimeout(verificarExpiracionToken, 60000)
+  }
+
+  useEffect(() => {
+    verificarExpiracionToken()
+  }, [])
+
   const navigateToLogin = () => {
     navigate('/')
   }
@@ -74,7 +102,7 @@ const NavBar = () => {
     if (!perfil && token) {
       navigate('/create')
     } else {
-      navigate('dashboard')
+      navigate('/dashboard')
     }
   }
 
@@ -101,65 +129,13 @@ const NavBar = () => {
         <Navbar.Collapse id="navbarScroll">
           <Nav className="mx-auto my-3 my-lg-0 align-items-center "></Nav>
 
-          <Nav
-            className={`my-3 my-lg-0 align-items-center  ${
-              dropdownOpen ? 'nav-dropdown-open' : ''
-            }`}
-          >
-            {userData ? (
-              <NavDropdown
-                title={userData.username}
-                id="basic-nav-dropdown"
-                onMouseEnter={() => setDropdownOpen(true)}
-                onMouseLeave={() => setDropdownOpen(false)}
-              >
-                <NavDropdown.Item onClick={handleLogout}>
-                  Cerrar Sesión
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={handlePerfil}>
-                  perfil
-                </NavDropdown.Item>
-              </NavDropdown>
-            ) : (
-              <>
-                <Link to="/registro" className="nav-link">
-                  Regístrate
-                </Link>{' '}
-                <Link to="/ingreso" className="nav-link">
-                  Inicia Sesión
-                </Link>
-              </>
-            )}
-
-            {!perfil && (
-              <Image
-                src={avatar}
-                roundedCircle
-                className="imagen_per"
-                ref={imageRef}
-                onClick={() => {
-                  if (dropdownOpen) {
-                    setDropdownOpen(false)
-                  } else {
-                    setDropdownOpen(true)
-                    setTimeout(() => {
-                      if (imageRef.current) {
-                        imageRef.current.click()
-                      }
-                    }, 100)
-                  }
-                }}
-              />
-            )}
-
-            {perfil && (
-              <ProfileImageNav userId={perfil.id} className="imagen_per" />
-            )}
-            <DarkModeToggle className="darkmode-btn" />
-            <Link to="/addimg" className="nav-link bg-success  text-light ">
-              Subir <i className="bi bi-arrow-up-circle-fill"></i>
-            </Link>
-          </Nav>
+          <NavbarItems
+            userData={userData}
+            dropdownOpen={dropdownOpen}
+            setDropdownOpen={setDropdownOpen}
+            handleLogout={handleLogout}
+            handlePerfil={handlePerfil}
+          />
         </Navbar.Collapse>
       </Container>
     </Navbar>

@@ -1,4 +1,4 @@
-import { ContainerCard } from '../components/card/ContainerCards'
+import ContainerCards from '../components/card/ContainerCards'
 import MiddleHome from '../components/middleHome/MiddleHome'
 import BuscadorImagenes from '../components/search/SearchBar'
 import BuscadorImagenesPorCaracteristicas from '../components/search/SearchCaracteristicas'
@@ -9,7 +9,7 @@ const Home = () => {
       <MiddleHome />
       <BuscadorImagenes />
       <BuscadorImagenesPorCaracteristicas />
-      <ContainerCard />
+      <ContainerCards />
     </div>
   )
 }

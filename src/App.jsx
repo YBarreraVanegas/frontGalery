@@ -11,9 +11,9 @@ import {
   RutaProtegidaEdit,
 } from './components/rutas/Ruta'
 import Home from './views/Home'
-import ImageDetail from './components/imagendetallada/ImageDetail'
 import CardsPorCategoria from './components/cardsCat/CardsPorCategoria'
 import CardsPorBusqueda from './components/cardsCat/CardsPorCategoria'
+import ImageDetail from './views/ImageDetail'
 
 function App() {
   return (

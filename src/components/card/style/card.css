@@ -18,6 +18,17 @@
   position: relative;
 }
 
+.card-buttons-detail {
+  z-index: 100;
+  margin-top: 10px;
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
 .card-buttons {
   z-index: 100;
   margin-top: 10px;
@@ -30,7 +41,6 @@
   justify-content: space-between;
   padding: 10px;
 }
-
 .card:hover .card-buttons {
   display: block;
 }
@@ -46,4 +56,9 @@
 
 .my-masonry-grid_item {
   margin-bottom: 10px;
+}
+.container-cards {
+  margin-top: 10px;
+  columns: 5 320px;
+  column-gap: 0.5em;
 }

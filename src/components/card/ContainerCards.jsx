@@ -1,17 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
-import useGetData from '../Fetch/useGetData'
-import Card from './Card.jsx'
 import './style/card.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Masonry from 'react-masonry-css'
+import { Container } from 'react-bootstrap'
+import useGetData from '../Fetch/useGetData'
+import Card from './Card'
 
-export const ContainerCard = () => {
+const ContainerCards = () => {
+  const observerRef = useRef(null)
   const { data, loading, error, refetch } = useGetData(
     `${import.meta.env.VITE_URL_API}/api`
   )
   const [cardsToShow, setCardsToShow] = useState([])
-  const observerRef = useRef(null)
-  const observerTargetRef = useRef(null)
 
   useEffect(() => {
     if (data) {
@@ -20,44 +19,32 @@ export const ContainerCard = () => {
   }, [data])
 
   useEffect(() => {
-    if (!observerRef.current) {
-      observerRef.current = new IntersectionObserver(
-        entries => {
-          const [target] = entries
-          if (target.isIntersecting) {
-            observerTargetRef.current &&
-              observerTargetRef.current.scrollIntoView()
-          }
-        },
-        {
-          root: null,
-          rootMargin: '0px',
-          threshold: 0.1,
+    const observer = new IntersectionObserver(
+      entries => {
+        const [target] = entries
+        if (target.isIntersecting) {
+          target.target.scrollIntoView()
         }
-      )
-    }
+      },
+      { threshold: 0.1 }
+    )
 
-    const observer = observerRef.current
-    if (observer && observerTargetRef.current) {
-      observer.observe(observerTargetRef.current)
+    const targetRef = observerRef.current
+    if (targetRef) {
+      observer.observe(targetRef)
     }
 
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect()
+      if (targetRef) {
+        observer.unobserve(targetRef)
       }
     }
   }, [])
 
-  // Función para recargar los datos
-  const handleRefresh = () => {
-    refetch()
-  }
-
   useEffect(() => {
-    window.addEventListener('beforeunload', handleRefresh)
+    window.addEventListener('beforeunload', refetch)
     return () => {
-      window.removeEventListener('beforeunload', handleRefresh)
+      window.removeEventListener('beforeunload', refetch)
     }
   }, [])
 
@@ -70,12 +57,8 @@ export const ContainerCard = () => {
   }
 
   return (
-    <div>
-      <Masonry
-        breakpointCols={{ default: 4, 1100: 3, 700: 2, 500: 1 }}
-        className="my-masonry-grid"
-        columnClassName="my-masonry-grid_column"
-      >
+    <Container>
+      <div className="container-cards">
         {cardsToShow.map(item => (
           <div key={item.id} className="my-masonry-grid_item">
             <Card
@@ -86,10 +69,9 @@ export const ContainerCard = () => {
             />
           </div>
         ))}
-      </Masonry>
-      <div ref={observerTargetRef} />
-    </div>
+      </div>
+    </Container>
   )
 }
 
-export default ContainerCard
+export default ContainerCards

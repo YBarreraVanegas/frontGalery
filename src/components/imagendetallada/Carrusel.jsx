@@ -1,18 +1,41 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import SearchCard from '../search/SearchCard'
+import { useEffect, useState } from 'react'
+import useGetData from '../Fetch/useGetData'
 
-const Carrusel = ({ categorias }) => {
+const CategoriasDetail = id => {
+  const idImg = id.id
+
+  const url = `${import.meta.env.VITE_URL_API}/api`
+  const urlMainImg = `${import.meta.env.VITE_URL_API}/api/${idImg}`
+  const [dataCarrusel, setDataCarrusel] = useState([])
+
+  const { data, loading, error, refetch } = useGetData(url)
+  const { data: dataMainImg } = useGetData(urlMainImg)
+  const categorias = dataMainImg.categorias
+  console.log(categorias)
+  useEffect(() => {
+    if (data) {
+      setDataCarrusel(data)
+    }
+  }, [data])
+  if (loading) {
+    return <div>Cargando...</div>
+  }
+
+  if (error) {
+    return <div>Error al cargar los datos</div>
+  }
+
   return (
-    <div className="carrusel-container">
-      <h1>Carrusel de Cards</h1>
-
-      <h3> {categorias} </h3>
-      <Link to={`/filtro/${categorias}`}>
-        <button className="btn-mostrar-mas">Mostrar más</button>
-      </Link>
+    <div className="carrusel">
+      {dataCarrusel.map(item => (
+        <div className="container" key={item.id}>
+          <ul>
+            <li> {item.categorias} </li>
+          </ul>
+        </div>
+      ))}
     </div>
   )
 }
 
-export default Carrusel
+export default CategoriasDetail

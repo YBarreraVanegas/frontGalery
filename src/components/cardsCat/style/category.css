@@ -1,0 +1,9 @@
+.container-col {
+  margin-top: 10px;
+  columns: 3 320px;
+  column-gap: 0.5em;
+  padding: 5%;
+}
+.my-masonry-grid_item {
+  margin-bottom: 10px;
+}

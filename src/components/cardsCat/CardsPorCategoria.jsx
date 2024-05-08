@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import useGetData from '../Fetch/useGetData'
 import SearchCard from '../search/SearchCard'
-
+import './style/category.css'
 const CardsPorBusqueda = () => {
   const { categoria } = useParams()
   const [data, setData] = useState([])
@@ -35,9 +35,9 @@ const CardsPorBusqueda = () => {
   })
 
   return (
-    <div className="row">
+    <div className="container-col">
       {filteredData.map(item => (
-        <div key={item.id} className="col-md-4">
+        <div key={item.id} className="my-masonry-grid_item">
           <SearchCard
             id={item.id}
             imagen={item.imagen}

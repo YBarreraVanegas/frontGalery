@@ -41,3 +41,6 @@
   background-color: var(--color-success) !important;
   border-color: var(--color-success) !important;
 }
+.list-group {
+  display: flex !important;
+}

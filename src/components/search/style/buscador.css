@@ -11,3 +11,7 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
+.image-search {
+  width: 90px;
+  height: auto;
+}

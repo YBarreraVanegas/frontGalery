@@ -6,10 +6,9 @@ const CreatePerfil = () => {
   const [nombre, setNombre] = useState('')
   const [imagenPerfil, setImagenPerfil] = useState(null)
   const [descripcion, setDescripcion] = useState('')
-  const [token] = useState(localStorage.getItem('token') || '')
 
-  const url = `${import.meta.env.VITE_URL_API}/perfil`
-  const { postData, loading, error } = usePostData()
+  const { postData, loading, error, token } = usePostData()
+
   const navigate = useNavigate() // Obtener la función de navegación
 
   const handleImagenPerfilChange = e => {
@@ -23,32 +22,45 @@ const CreatePerfil = () => {
     formData.append('nombre', nombre)
     formData.append('imagen_perfil', imagenPerfil)
     formData.append('descripcion', descripcion)
-    await postData(url, formData, token)
+    await postData(`${import.meta.env.VITE_URL_API}/perfil`, formData, token)
 
-    // Redirigir a la página principal ('/') después de enviar el formulario
-    navigate('/', { replace: true }) // Usar navigate con replace para reemplazar la entrada en el historial
+    navigate('/', { replace: true })
+    window.location.reload() // Recargar la página
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={nombre}
-        onChange={e => setNombre(e.target.value)}
-        placeholder="Nombre"
-      />
-      <input type="file" onChange={handleImagenPerfilChange} accept="image/*" />
-      <textarea
-        value={descripcion}
-        onChange={e => setDescripcion(e.target.value)}
-        placeholder="Descripción"
-      />
+    <form className="container mt-4" onSubmit={handleSubmit}>
+      <div className="mb-3">
+        <input
+          type="text"
+          value={nombre}
+          onChange={e => setNombre(e.target.value)}
+          className="form-control"
+          placeholder="Nombre"
+        />
+      </div>
+      <div className="mb-3">
+        <input
+          type="file"
+          onChange={handleImagenPerfilChange}
+          className="form-control"
+          accept="image/*"
+        />
+      </div>
+      <div className="mb-3">
+        <textarea
+          value={descripcion}
+          onChange={e => setDescripcion(e.target.value)}
+          className="form-control"
+          placeholder="Descripción"
+        />
+      </div>
 
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading} className="btn btn-primary">
         Enviar
       </button>
-      {loading && <p>Enviando datos...</p>}
-      {error && <p>Error al enviar datos</p>}
+      {loading && <p className="mt-2">Enviando datos...</p>}
+      {error && <p className="mt-2 text-danger">Error al enviar datos</p>}
     </form>
   )
 }

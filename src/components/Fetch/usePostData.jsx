@@ -1,23 +1,34 @@
-import { useState } from 'react'
-import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 const usePostData = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [responseData, setResponseData] = useState(null)
+  const [token, setToken] = useState('')
 
-  const postData = async (url, formData, userId) => {
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token')
+    if (storedToken) {
+      setToken(storedToken)
+    }
+  }, [])
+
+  const postData = async (url, formData) => {
     setLoading(true)
     setError(null)
-
     try {
-      const response = await axios.post(url, formData, {
+      const response = await fetch(url, {
+        method: 'POST',
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${userId}`, // Incluye el token en la cabecera
+          Authorization: token ? `Bearer ${token}` : '', // Agrega el token a la cabecera de autorización si está presente
         },
+        body: formData,
       })
-      setResponseData(response.data)
+      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(data.message || 'Error en la solicitud')
+      }
+      setResponseData(data)
     } catch (error) {
       setError(error.message)
     } finally {
@@ -25,7 +36,7 @@ const usePostData = () => {
     }
   }
 
-  return { loading, error, responseData, postData }
+  return { loading, error, responseData, postData, token }
 }
 
 export default usePostData
